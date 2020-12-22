@@ -18,7 +18,7 @@ class SCMoney(commands.Cog):
     async def SCMoney(self, ctx, *args):
         #define the file to use
         directory = 'fundingGoals.txt'
-        #ets the user know this will take some time
+        #lets the user know this will take some time
         await ctx.send('This takes a couple of seconds....')
         #if the file is found
         if os.path.isfile(directory):

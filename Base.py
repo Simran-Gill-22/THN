@@ -4,6 +4,7 @@
 ######################################
 
 #import modules
+import os
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot, bot
@@ -170,7 +171,22 @@ async def on_message_delete(message):
     await bot.process_commands(message)
         
 
-if IsDebug == True:
-    bot.run('')
-else:   
-    bot.run('')
+
+#set variables
+Token = ''
+directory = 'Token.txt'
+#if the file is found
+if os.path.isfile(directory):
+    #open the file
+    file = open(directory, 'r+')
+    #read the lines
+    lines = file.readlines()
+    #if debug is set to true
+    if IsDebug == True:
+        #read the debug token
+        Token = lines[0]
+    else:
+        #read the prod token
+        Token = lines[1]
+
+bot.run(Token)
