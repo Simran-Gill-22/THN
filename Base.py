@@ -12,6 +12,9 @@ from os.path import isfile, join
 import datetime
 import importlib
 
+#import function modules
+from Modules.AllFolderExist import AllFolderExist
+
 #client const
 OSBuid : float = 1.0
 Now = datetime.datetime.now()
@@ -68,6 +71,11 @@ async def on_ready():
     #gets time and date
     time_date = Now.strftime("%d-%m-%Y %H:%M")
     #print when the bot is ready as well as the date and time for the user
+    print("""
+    ######################
+    #####Starting Bot#####
+    ######################
+    """)
     print("Bot Online!")
     print('Current time is:' + time_date)
     print("Name: {}".format(bot.user.name))
@@ -76,6 +84,8 @@ async def on_ready():
     print(f"connected to {bot.guilds}") 
     #sets the presence of the bot
     await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.playing, name='Version ' + str(OSBuid)))
+    #Check and create all folders exist
+    AllFolderExist()
 
 @bot.event
 async def on_message(message):

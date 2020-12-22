@@ -3,30 +3,62 @@ import random
 import discord
 from discord.ext import commands, tasks
 from discord.utils import get
+
 from Modules.FolderBuilder import FolderBuilder
+from Modules.Error import Error
 
 class Loops(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot       
+        self.bot = bot      
         self.mm_image_loop.start()
         self.kr_image_loop.start()
         self.cr_image_loop.start()
 
     @commands.Cog.listener()
     async def on_ready(self):
+        print("""
+        ######################
+        ###Checking Channels##
+        ######################
+        """)
         await self.CreateChannels()
+        print("""
+        ######################
+        ####Starting Loops####
+        ######################
+        """) 
     
     def cog_unload(self):
         self.mm_image_loop.stop()
         self.kr_image_loop.stop()
         self.cr_image_loop.stop()
+    
+    async def UnloadLoop(self, channel):
+        #set variables
+        ChannelToUnload = channel.name
+        #set error title and message
+        Title = str(f'{ChannelToUnload} Loop Error')
+        Content = str(f'This loop has stoppped, see the logs to know more')
+        #send the embeded message
+        await channel.send(embed = Error(Title, Content))
+
+        #logic to decide which loop to unload
+        if ChannelToUnload == 'magic-mike-appreciation-society':
+            print('MM loop has been unloaded')
+            self.mm_image_loop.cancel()
+        elif ChannelToUnload == 'chris-roberts-appreciation-society':
+            print('CR loop has been unloaded')
+            self.cr_image_loop.cancel()
+        elif ChannelToUnload == 'keanu-reeves-appreciation-society':
+            print('KR loop has been unloaded')
+            self.kr_image_loop.cancel()
 
     #mm posting loop
     @tasks.loop(seconds=random.randint(28800, 57600), count=None)
     async def mm_image_loop(self):
         await self.bot.wait_until_ready()
         await asyncio.sleep(3)
-        print("mm loop has started")
+        print("MM loop has started")
         #define channel
         channel_name = 'magic-mike-appreciation-society'
         #finds all channels
@@ -39,6 +71,9 @@ class Loops(commands.Cog):
             channel = get(self.bot.get_all_channels(), name=channel_name) 
         #Call folder builder to make the image
         path = FolderBuilder(channel_name)
+        #stop the loop is string is empty
+        if not path:
+            await self.UnloadLoop(channel)
         #pushes the image
         await channel.send(file=discord.File(path))
     
@@ -47,7 +82,7 @@ class Loops(commands.Cog):
     async def cr_image_loop(self):
         await self.bot.wait_until_ready()
         await asyncio.sleep(3)
-        print("cr loop has started")
+        print("CR loop has started")
         #define channel
         channel_name = 'chris-roberts-appreciation-society'
         #finds all channels
@@ -60,6 +95,9 @@ class Loops(commands.Cog):
             channel = get(self.bot.get_all_channels(), name=channel_name) 
         #Call folder builder to make the image
         path = FolderBuilder(channel_name)
+        #stop the loop is string is empty
+        if not path:
+            await self.UnloadLoop(channel)
         #pushes the image
         await channel.send(file=discord.File(path))
 
@@ -68,7 +106,7 @@ class Loops(commands.Cog):
     async def kr_image_loop(self):
         await self.bot.wait_until_ready()
         await asyncio.sleep(3)
-        print("kr loop has started")
+        print("KR loop has started")
         #define channel
         channel_name = 'keanu-reeves-appreciation-society'
         #finds all channels
@@ -81,6 +119,9 @@ class Loops(commands.Cog):
             channel = get(self.bot.get_all_channels(), name=channel_name) 
         #Call folder builder to make the image
         path = FolderBuilder(channel_name)
+        #stop the loop is string is empty
+        if not path:
+            await self.UnloadLoop(channel)          
         #pushes the image
         await channel.send(file=discord.File(path))
 

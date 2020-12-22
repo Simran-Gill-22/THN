@@ -1,6 +1,9 @@
 import discord
 from discord.ext import commands
 
+from Modules.PathExist import PathExist
+from Modules.Error import Error
+
 class Money(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -10,8 +13,17 @@ class Money(commands.Cog):
     async def Money(self, ctx):
         #image location
         path = 'Memes/Money.jpg'
-        #pushes the image
-        return await ctx.send(file=discord.File(path))
+        #check if the file exist
+        if PathExist(path):
+            #if yes pushes the image
+            return await ctx.send(file=discord.File(path))
+        else:
+            #send an error
+            #set error title and message
+            Title = str('Can\'t find image')
+            Content = str(f'Image can\'t be posted, check logs to know more')
+            #send the embeded message
+            await ctx.send(embed = Error(Title, Content))
 
 def setup(bot):
     bot.add_cog(Money(bot))
