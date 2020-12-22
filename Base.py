@@ -171,6 +171,6 @@ async def on_message_delete(message):
         
 
 if IsDebug == True:
-    bot.run('NDUxMDk0MjU4ODA4NTIwNzE1.XQErWg.XeiZM0xNRuNwIC-CY2OXN0dNwuQ')
+    bot.run('')
 else:   
-    bot.run('MzQzMjM0MTk2ODQ5ODE5NjUw.DGbbAg.IX8IexKdXeoFgdI-nrpWfXVD6q0')
+    bot.run('')
