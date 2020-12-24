@@ -8,7 +8,7 @@ class Source(commands.Cog):
     @commands.command(pass_context=True, name='Source', aliases=['sourcemessage'], no_pm=True)
     async def Source(self, ctx):
         #sets default variables
-        URL : str = 'https://github.com/Simran-Gill-22/THN'
+        URL : str = 'https://github.com/ssg22/TNH'
         return await ctx.send(f'Source code {URL}')
 
 def setup(bot):
