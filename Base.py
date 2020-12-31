@@ -5,6 +5,7 @@
 
 #import modules
 import os
+from typing import NewType
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot, bot
@@ -12,6 +13,7 @@ from os import listdir
 from os.path import isfile, join
 import datetime
 import importlib
+import json
 
 #import function modules
 from Modules.AllFolderExist import AllFolderExist
@@ -21,6 +23,8 @@ OSBuid : float = 1.0
 Now = datetime.datetime.now()
 #Set to True to run on a test server
 IsDebug : bool = True
+UseFolders = ""
+
 
 def get_prefix(bot, message):
     """A callable Prefix for our bot. This could be edited to allow per server prefixes."""
@@ -83,10 +87,38 @@ async def on_ready():
     print("ID: {}".format(bot.user.id))
     print("OS Build: {}".format(OSBuid))
     print(f"connected to {bot.guilds}") 
+    if IsDebug:
+        print("""
+    ######################
+    ####Bot is in Debug###
+    ######################
+    """)
+    else:
+        print("""
+    ######################
+    ####Bot is in Prod####
+    ######################
+    """)
+
+    #check the bot is not running in debug
+    if not IsDebug:
+        #open/create the json file
+        with open(directory) as f:
+            data = json.load(f)
+        #find the correct key
+        for i in data:
+            if i == 'Tokens':
+                for FoundToken in data['Tokens']:
+                    if FoundToken['Name'] == 'Prod':
+                        #if found write the new value
+                        FoundToken['Token'] = Token
+        #save the new json
+        with open(directory, "w") as f:
+            json.dump(data, f, indent=4)
+
     #sets the presence of the bot
     await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.playing, name='Version ' + str(OSBuid)))
-    #Check and create all folders exist
-    AllFolderExist()
+
 
 @bot.event
 async def on_message(message):
@@ -174,19 +206,62 @@ async def on_message_delete(message):
 
 #set variables
 Token = ''
-directory = 'Token.txt'
+directory = 'Json/Token.json'
 #if the file is found
 if os.path.isfile(directory):
-    #open the file
-    file = open(directory, 'r+')
-    #read the lines
-    lines = file.readlines()
-    #if debug is set to true
-    if IsDebug == True:
-        #read the debug token
-        Token = lines[0]
-    else:
-        #read the prod token
-        Token = lines[1]
+    #open the json file
+    with open(directory) as f:
+        #load the contents
+        data = json.load(f)
 
-bot.run(Token)
+    #loops through the json file
+    for i in data:
+        #look for tokens
+        if i == 'Tokens':
+            #go through the multiple tokens
+            for FoundToken in data['Tokens']:
+                #check if the bot is running the debug token
+                if IsDebug:
+                    #if so use the token
+                    #check the name of the token
+                    if FoundToken['Name'] == 'Debug':
+                        #if the length of the token is 0
+                        if len(FoundToken['Token']) == 0:
+                            #set debug to off to use the prod token
+                            IsDebug = False
+                            break   
+                        #if the token is a value
+                        else:
+                            #use the token
+                            Token = FoundToken['Token']
+                #if not using debug token
+                elif not IsDebug:
+                    #check the name 
+                    if FoundToken['Name'] == 'Prod':
+                        #check the lenght of the token
+                        if len(FoundToken['Token']) == 0:
+                            #if it is not a value
+                            break
+                        else:
+                            #use the token
+                            Token = FoundToken['Token']
+                    
+#if the file does not exist
+if not os.path.isfile(directory):
+    #make the user enter the token
+    Token = input('Please enter your token')
+    #set the new json 
+    NewToken = {
+        "Name":"Prod",
+        "Token":Token 
+    }
+    #write the new token to the file created
+    with open(directory, "w") as write_file:
+        json.dump({"Tokens": [NewToken]}, write_file, indent=4)
+
+try:
+    bot.run(Token)
+except:
+    print('No valid Token')
+finally:
+    exit()

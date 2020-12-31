@@ -1,10 +1,13 @@
+import json
 import asyncio
+import os
 import random
 import discord
 from discord.ext import commands, tasks
 from discord.utils import get
 
 from Modules.FolderBuilder import FolderBuilder
+from Modules.AllFolderExist import AllFolderExist
 from Modules.Error import Error
 
 class Loops(commands.Cog):
@@ -16,6 +19,24 @@ class Loops(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        directory = 'Json/Config.json'
+        global UseFolders
+        if os.path.isfile(directory):
+            with open(directory) as f:
+                data = json.load(f)
+                if 'UseFolders' not in data:
+                    print('use folders not in config, not going to use folders')
+                else:
+                    UseFolders = data['UseFolders']
+                    if UseFolders != "False":
+                        #Check and create all folders exist
+                        AllFolderExist()
+                        print(data['UseFolders'])
+                    else:
+                        print("not using folders")
+        else:
+            UseFolders = "False"
+
         print("""
         ######################
         ###Checking Channels##
@@ -70,12 +91,16 @@ class Loops(commands.Cog):
             #get the channel object again
             channel = get(self.bot.get_all_channels(), name=channel_name) 
         #Call folder builder to make the image
-        path = FolderBuilder(channel_name)
+        path = FolderBuilder(channel_name, UseFolders)
         #stop the loop is string is empty
         if not path:
             await self.UnloadLoop(channel)
-        #pushes the image
-        await channel.send(file=discord.File(path))
+        #check what type of path to send the appropriate message
+        if "http" in path:
+            await channel.send(path)
+        else:
+            #pushes the image
+            await channel.send(file=discord.File(path))
     
     #cr posting loop
     @tasks.loop(seconds=random.randint(28800, 57600), count=None)
@@ -94,12 +119,16 @@ class Loops(commands.Cog):
             #get the channel object again
             channel = get(self.bot.get_all_channels(), name=channel_name) 
         #Call folder builder to make the image
-        path = FolderBuilder(channel_name)
+        path = FolderBuilder(channel_name, UseFolders)
         #stop the loop is string is empty
         if not path:
             await self.UnloadLoop(channel)
-        #pushes the image
-        await channel.send(file=discord.File(path))
+        #check what type of path to send the appropriate message
+        if "http" in path:
+            await channel.send(path)
+        else:
+            #pushes the image
+            await channel.send(file=discord.File(path))
 
     #kr posting loop
     @tasks.loop(seconds=random.randint(28800, 57600), count=None)
@@ -118,12 +147,16 @@ class Loops(commands.Cog):
             #get the channel object again
             channel = get(self.bot.get_all_channels(), name=channel_name) 
         #Call folder builder to make the image
-        path = FolderBuilder(channel_name)
+        path = FolderBuilder(channel_name, UseFolders)
         #stop the loop is string is empty
         if not path:
             await self.UnloadLoop(channel)          
-        #pushes the image
-        await channel.send(file=discord.File(path))
+        #check what type of path to send the appropriate message
+        if "http" in path:
+            await channel.send(path)
+        else:
+            #pushes the image
+            await channel.send(file=discord.File(path))
 
     #this checks all the channels are present and in the correct categories 
     @commands.command(pass_context=True, name='CreateChannels', aliases=['createchannels'], no_pm=True)
