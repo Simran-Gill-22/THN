@@ -1,13 +1,15 @@
 import discord
 from discord.ext import commands
 
-class GetBans(commands.Cog):
+class Bans(commands.Cog):
+    'This category handles all the bans for the server'
     def __init__(self, bot):
         self.bot = bot
 
     #returns a list of currently banned users
     @commands.command(pass_context=True, name='GetBans', aliases=['getbanneduser'], no_pm=True)
     async def GetBans(self, ctx):
+        'This command returns a list of all banned users in the server '
         #get the banned users
         x = await ctx.guild.bans()
         if not x:
@@ -24,4 +26,4 @@ class GetBans(commands.Cog):
         return await ctx.send(embed=embedVar)
 
 def setup(bot):
-    bot.add_cog(GetBans(bot))
+    bot.add_cog(Bans(bot))

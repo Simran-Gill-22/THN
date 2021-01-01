@@ -1,6 +1,6 @@
 ######################################
-#current release date:      22/12/2020
-#current version:           1.0
+#current release date:      01/01/2021
+#current version:           2.0
 ######################################
 
 #import modules
@@ -19,7 +19,7 @@ import json
 from Modules.AllFolderExist import AllFolderExist
 
 #client const
-OSBuid : float = 1.0
+OSBuid : float = 2.0
 Now = datetime.datetime.now()
 #Set to True to run on a test server
 IsDebug : bool = True

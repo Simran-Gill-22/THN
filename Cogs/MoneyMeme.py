@@ -4,13 +4,15 @@ from discord.ext import commands
 from Modules.PathExist import PathExist
 from Modules.Error import Error
 
-class Money(commands.Cog):
+class MoneyMeme(commands.Cog):
+    'This class handles the Chris Roberts money meme'
     def __init__(self, bot):
         self.bot = bot
 
     #posts the cr money meme
     @commands.command(pass_context=True, name='Money', aliases=['sendmoneymeme'], no_pm=True)
     async def Money(self, ctx):
+        'This sends the money meme to the channel it is sent'
         #image location
         path = 'Memes/Money.jpg'
         #check if the file exist
@@ -26,4 +28,4 @@ class Money(commands.Cog):
             await ctx.send(embed = Error(Title, Content))
 
 def setup(bot):
-    bot.add_cog(Money(bot))
+    bot.add_cog(MoneyMeme(bot))

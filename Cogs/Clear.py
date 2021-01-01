@@ -1,12 +1,14 @@
 from discord.ext import commands
 
 class Clear(commands.Cog):
+    'This category handles the clearing of a chat channel'
     def __init__(self, bot):
         self.bot = bot
 
     #Clears the chat in the channel it is called using the number from the command
     @commands.command(pass_context=True, name='Clear', aliases=['clearmessages'], no_pm=True)
     async def Clear(self, ctx, number):
+        'This command takes an argument of a number between 1 and 99. Removing that amount of messages from the channel it is seent. e.g. $Clear 10'
         #sets default variables
         mgs = []
         number = int(number)

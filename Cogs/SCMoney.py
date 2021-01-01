@@ -11,12 +11,14 @@ from Modules.TimeConvert import TimeConvert
 Now = datetime.datetime.now()
 
 class SCMoney(commands.Cog):
+    'This category handles how much money earned and time has passed for RSI'
     def __init__(self, bot):
         self.bot = bot
        
     #This function utilises the scraper and difference in time to give a difference in money generated for rsi
     @commands.command(pass_context=True, name='SCMoney', aliases=['scmoneyscraper'], no_pm=True)
     async def SCMoney(self, ctx, *args):
+        'This command lets the user know how much money Chris Roberts has made in a certain time'
         #define the file to use
         directory = 'Json/fundingGoals.json'
         #lets the user know this will take some time

@@ -2,13 +2,15 @@ import random
 from discord.ext import commands
 from discord.utils import get, find
 
-class Book(commands.Cog):
+class Booking(commands.Cog):
+    'This category handles everything to do with booking an event'
     def __init__(self, bot):
         self.bot = bot
 
     #will probably have to re-write
     @commands.command(pass_context=True)  
-    async def Book(self, ctx,*args):
+    async def BookCinema(self, ctx,*args):
+        'This command selects a random user part of the cinema role'
         #set some variables
         RoleName : str = 'Cinema'
         RoleUsers = []
@@ -34,4 +36,4 @@ class Book(commands.Cog):
                 
 
 def setup(bot):
-    bot.add_cog(Book(bot))
+    bot.add_cog(Booking(bot))

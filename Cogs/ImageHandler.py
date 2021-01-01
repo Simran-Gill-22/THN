@@ -14,7 +14,8 @@ import re
 from Modules.Error import Error
 from Modules.ImageURLValidator import ImageURLValidator
 
-class AddImage(commands.Cog):
+class ImageHandler(commands.Cog):
+    'This category handles all images for approval and society loops'
     def __init__(self, bot):
         self.bot = bot      
 
@@ -351,6 +352,33 @@ class AddImage(commands.Cog):
                             
                             #remove reaction
                             await reaction.message.remove_reaction(reaction.emoji, user)
+    
+    async def GetImagesFromLists(self, DirectoryToUse, JSONObjectName, TypeOfList, ListOfMemes, MemeStatus):
+        with open(DirectoryToUse) as f:
+            #load the contents
+            data = json.load(f)
+            #loops through the json file
+            for i in data:
+                #look for image
+                if i == JSONObjectName:
+                    #go through the multiple image
+                    for Image in data[JSONObjectName]:
+                        if TypeOfList == 'All':
+                            if JSONObjectName == 'Appreciation' and Image['AppreciationSociety']:
+                                #sets the appreciation sociaty accronym if looking for appreciation 
+                                ListOfMemes = (f"{ListOfMemes}{Image['Name']} - ({Image['AppreciationSociety']})\n")
+                            else:
+                                #set the list of image to be used by the embed later
+                                ListOfMemes = (f"{ListOfMemes}{Image['Name']}\n")
+                            #set the list of image statuses to be used by the embed later
+                            MemeStatus = (f"{MemeStatus}{Image['ApprovalStatus']}\n")
+                        else:
+                            #only check for the approval type 
+                            if Image["ApprovalStatus"] == TypeOfList:
+                                #set the list of image to be used by the embed later
+                                ListOfMemes = (f"{ListOfMemes}{Image['Name']}\n")
+        
+        return ListOfMemes, MemeStatus
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
@@ -373,6 +401,7 @@ class AddImage(commands.Cog):
 
     @commands.command(pass_context=True, name='ApprovalListUsers', aliases=['approvallistusers'], no_pm=True)
     async def ApprovalListUsers(self, ctx):
+        'This returns a list of users who are currently able to approve images'
         #set variable
         GroupApprovalListString = ''
 
@@ -398,6 +427,7 @@ class AddImage(commands.Cog):
     
     @commands.command(pass_context=True, name='ApprovalList', aliases=['approvallist'], no_pm=True)
     async def ApprovalList(self, ctx, AddRemove, UserToAddRemove):
+        'This adds/removes a user from the approval list by @, e.g. $ApprovalList Add/Remove @User'
         #set the AddRemove to lower
         AddRemoveLower = AddRemove.lower()
         #check if owner
@@ -471,16 +501,18 @@ class AddImage(commands.Cog):
 
     @commands.command(pass_context=True, name='OwnerApproval', aliases=['ownerapproval'], no_pm=True)
     async def OwnerApproval(self, ctx, OwnerApprovalBool):
+        'This command makes it so only Admins can approve images. Only the Guild owner can access this command. e.g. $OwnerApproval True/False'
         await self.ChangeApprovalType(ctx, 'Owner', OwnerApprovalBool)
 
     @commands.command(pass_context=True, name='ListApproval', aliases=['listapproval'], no_pm=True)
     async def ListApproval(self, ctx, OwnerApprovalBool):
+        'This command makes it so only users on the approval list can approve images. Only the Guild owner can access this command. e.g. $ListApproval True/False'
         await self.ChangeApprovalType(ctx, 'List', OwnerApprovalBool)
 
 
     @commands.command(pass_context=True, name='AddImage', aliases=['addimage'], no_pm=True)
     async def AddImage(self, ctx, ImageName, ImageURL):
-
+        'This command submits an image for approval. if the image name is kr/cr/mm then it is submitted for the appropriate society. e.g. $AddImage ImageName ImageURL'
         ValidImage = ImageURLValidator(ImageURL)
         if not ValidImage:
             Title = str('Invalid URL')
@@ -579,7 +611,6 @@ class AddImage(commands.Cog):
                 "ApprovingUser": ""
             }
         #set the new json 
-        
         data[JSONObjectName].append(NewData)
         #write the new token to the file created
         with open(DirectoryToUse, "w") as write_file:
@@ -588,6 +619,7 @@ class AddImage(commands.Cog):
 
     @commands.command(pass_context=True, name='EditImage', aliases=['editimage'], no_pm=True)
     async def EditImage(self, ctx, ImageName):
+        'if an image is no longer in the discord bots cache this command is used to approve/reject it. e.g. $EditImage ImageRef'
         #set sending user
         sending_user = ctx.author.mention
         #define channel
@@ -609,7 +641,92 @@ class AddImage(commands.Cog):
             Content = str(f'{sending_user}, no image is found by the reference {ImageName}')
             #send the embeded message
             return await ctx.send(embed = Error(Title, Content))       
+
+    @commands.command(pass_context=True, name='Image', aliases=['image'], no_pm=True)
+    async def Image(self, ctx, MemeName):
+        'This posts the Image using the ImageRef/ImageName if it is not added to a society. e.g. $Image ImageRef/ImageName'
+        with open(MemeDirectory) as f:
+            #load the contents
+            data = json.load(f)
+            #loops through the json file
+            for i in data:
+                #look for Memes
+                if i == 'Memes':
+                    #go through the multiple memes
+                    for Meme in data['Memes']:
+                        if Meme["Name"] == MemeName and Meme["ApprovalStatus"] == "Approved":
+                            return await ctx.send(Meme["URL"])
+                        elif Meme["ApprovalStatus"] == "Denied":
+                            #send an error
+                            #set error title and message
+                            Title = str('Image has been Denied')
+                            Content = str(f'This Image has been denied {Meme["ApprovingUser"]}')
+                            #send the embeded message
+                            return await ctx.send(embed = Error(Title, Content))
+                        elif Meme["ApprovalStatus"] == "Waiting":
+                            #send an error
+                            #set error title and message
+                            Title = str('Image is still pending')
+                            Content = str(f'This Image has not been approved or denied')
+                            #send the embeded message
+                            return await ctx.send(embed = Error(Title, Content))
+        
+        #send an error
+        #set error title and message
+        Title = str('No image found')
+        Content = str(f'No image has been found by that name')
+        #send the embeded message
+        return await ctx.send(embed = Error(Title, Content))
+
+
+    
+    @commands.command(pass_context=True, name='ListImages', aliases=['listimages'], no_pm=True)
+    async def ListImages(self, ctx, TypeOfList):
+        'This lists all the images in a category using an argument e.g. $ListImages Approved/Pending/Denied/All'
+        #set the text to lowercase to not make it case sensitive
+        LowercaseString = TypeOfList.lower()
+
+        #set the embed colour
+        if LowercaseString == 'approved':
+            EmbedColor = discord.Color.green()
+        elif LowercaseString == 'pending':
+            EmbedColor = discord.Color.from_rgb(255,255,0)
+        elif LowercaseString == 'denied':
+            EmbedColor = discord.Color.red()
+        elif LowercaseString == 'all':
+            EmbedColor = discord.Color.blue()
+        else:
+            #if a keyword is not found
+            e = discord.Embed(title = f'Error, invalid argument', color = discord.Color.red())
+            e.add_field(name= str(f'Available key words'), value= str(f'Approved\nPending\nDenied\nAll'))
+            return await ctx.send(embed = e)
+        
+        ListOfMemes = ''
+        MemeStatus = ''
+        Result1 = await self.GetImagesFromLists(AppreciationDirectory, 'Appreciation', TypeOfList, ListOfMemes, MemeStatus)
+        Result2 = await self.GetImagesFromLists(MemeDirectory, 'Memes', TypeOfList, Result1[0], Result1[1])
+
+        ListOfMemes = Result2[0]
+        MemeStatus = Result2[1]
+        
+
+        #check if the list of memes found is empty if not set them to a default message
+        if not ListOfMemes:
+            ListOfMemes = "No images found"
+        if not MemeStatus:
+            MemeStatus = "Null"
+
+        #set the embeded message appropriatly for a status or all 
+        if TypeOfList == 'All':
+            e = discord.Embed(title = f'All images', color = EmbedColor)
+            e.add_field(name= str(f'Image Name'), value= str(f'{ListOfMemes}'))
+            e.add_field(name= str(f'Message'), value= str(f'{MemeStatus}'))
+        else:
+            e = discord.Embed(title = f'All {TypeOfList} images', color = EmbedColor)
+            e.add_field(name= str(f'Image Name'), value= str(f'{ListOfMemes}'))
+        #send embeded message
+        await ctx.send(embed = e)
             
 
 def setup(bot):
-    bot.add_cog(AddImage(bot))
+    bot.add_cog(ImageHandler(bot))
