@@ -1,0 +1,24 @@
+{
+    "Appreciation": [
+        {
+            "MessageID": "",
+            "Name": "",
+            "URL": "",
+            "ApprovalStatus": "",
+            "UserID": "",
+            "ApprovingUser": "",
+            "AppreciationSociety": "",
+            "ImageID": ""
+        },
+        {
+            "MessageID": 794534254394343444,
+            "Name": 794534253715128331,
+            "URL": "https://www.gstatic.com/tv/thumb/persons/1443/1443_v9_bc.jpg",
+            "ApprovalStatus": "Denied",
+            "UserID": "<@93539745421864960>",
+            "ApprovingUser": "<@93539745421864960>",
+            "AppreciationSociety": "kr",
+            "ImageID": ""
+        }
+    ]
+}

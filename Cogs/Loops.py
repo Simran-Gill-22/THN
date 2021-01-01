@@ -42,7 +42,7 @@ class Loops(commands.Cog):
         ###Checking Channels##
         ######################
         """)
-        await self.CreateChannels()
+        await self.CreateChannels('Appreciation Society', ['magic-mike-appreciation-society', 'chris-roberts-appreciation-society', 'keanu-reeves-appreciation-society'] )
         print("""
         ######################
         ####Starting Loops####
@@ -87,7 +87,7 @@ class Loops(commands.Cog):
         #if the channel is not found 
         if not channel:
             #call the function to create the channel
-            self.CreateChannels()
+            self.CreateChannels('Appreciation Society', [channel_name])
             #get the channel object again
             channel = get(self.bot.get_all_channels(), name=channel_name) 
         #Call folder builder to make the image
@@ -115,7 +115,7 @@ class Loops(commands.Cog):
                 #if the channel is not found 
         if not channel:
             #call the function to create the channel
-            self.CreateChannels()
+            self.CreateChannels('Appreciation Society', [channel_name])
             #get the channel object again
             channel = get(self.bot.get_all_channels(), name=channel_name) 
         #Call folder builder to make the image
@@ -143,7 +143,7 @@ class Loops(commands.Cog):
         #if the channel is not found 
         if not channel:
             #call the function to create the channel
-            self.CreateChannels()
+            self.CreateChannels('Appreciation Society', [channel_name])
             #get the channel object again
             channel = get(self.bot.get_all_channels(), name=channel_name) 
         #Call folder builder to make the image
@@ -160,12 +160,9 @@ class Loops(commands.Cog):
 
     #this checks all the channels are present and in the correct categories 
     @commands.command(pass_context=True, name='CreateChannels', aliases=['createchannels'], no_pm=True)
-    async def CreateChannels(self):
+    async def CreateChannels(self, CategoryName, channel_name):
         #wait until the bot is ready
         await self.bot.wait_until_ready()
-        #creates the categories and channels to be used by the loop
-        CategoryName = 'Appreciation Society'
-        channel_name = ['magic-mike-appreciation-society', 'chris-roberts-appreciation-society', 'keanu-reeves-appreciation-society']  
         #get all the guilds the bot is in
         AllGuilds = self.bot.guilds
         #go through the guilds the bot is in 

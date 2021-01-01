@@ -148,14 +148,12 @@ async def on_message(message):
             #does nothing
             return
         elif any(x in message.content for x in sum_message_emotes):
-            #saves the user who sent it for a response 
-            culprit_user = message.author.mention
             #puts the message together
-            sum_message = (culprit_user + ' Summit1G emotes :nauseated_face:')     
+            sum_message = (sending_user + ' Summit1G emotes :nauseated_face:')     
             #send the message
             await channel.send(sum_message)
             #returns the user so it can be used in other commands
-            return culprit_user      
+            return sending_user      
 
     await bot.process_commands(message)
 
@@ -202,7 +200,6 @@ async def on_message_delete(message):
     #command needed to use other commands   
     await bot.process_commands(message)
         
-
 
 #set variables
 Token = ''

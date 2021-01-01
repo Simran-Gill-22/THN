@@ -1,3 +1,7 @@
 {
-    "UseFolders":"False"
+    "UseFolders": "False",
+    "OwnerApproval": "True",
+    "GroupApproval": "False",
+    "OwnerID": 93539745421864960,
+    "ApprovalList": []
 }

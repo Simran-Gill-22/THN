@@ -1,0 +1,20 @@
+{
+    "Memes": [
+        {
+            "MessageID": "",
+            "Name": "",
+            "URL": "",
+            "ApprovalStatus": "",
+            "UserID": "",
+            "ApprovingUser": ""
+        },
+        {
+            "MessageID": 794387107073622057,
+            "Name": "TarkovGuide",
+            "URL": "https://i.imgur.com/Ax8zxjO.jpg",
+            "ApprovalStatus": "Approved",
+            "UserID": "<@93539745421864960>",
+            "ApprovingUser": "<@93539745421864960>"
+        }
+    ]
+}
