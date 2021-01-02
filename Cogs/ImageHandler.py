@@ -13,6 +13,7 @@ import re
 
 from Modules.Error import Error
 from Modules.ImageURLValidator import ImageURLValidator
+from Modules.ConfigLoad import GetGroupApproval, GetGroupApprovalList, GetOwnerApproval, GetOwnerID
 
 class ImageHandler(commands.Cog):
     'This category handles all images for approval and society loops'
@@ -38,40 +39,10 @@ class ImageHandler(commands.Cog):
         DirectoryConfig = 'Json/Config.json'
         MemeDirectory = 'Images/Approval.json'
         AppreciationDirectory = 'Images/AppreciationApproval.json'
-        if os.path.isfile(DirectoryConfig):
-            with open(DirectoryConfig) as f:
-                data = json.load(f)
-                #check if the value is in the config
-                if 'OwnerApproval' not in data:
-                    #if not it will default to false
-                    OwnerApproval = False
-                #if it is in the app
-                else:
-                    #check if it is true or false
-                    if data['OwnerApproval'] == 'True' or data['OwnerApproval'] == 'False':
-                        #if it is set the variable appropriatly
-                        if data['OwnerApproval'] == 'True':
-                            OwnerApproval = True
-                        elif data['OwnerApproval'] == 'False':
-                            OwnerApproval = False
-                        #check the owner id is in the data
-                        if 'OwnerID' in data:
-                            #if yes set it 
-                            OwnerID = data['OwnerID']
-
-                #check if the value is in the config
-                if 'GroupApproval' not in data:
-                    #if not it will default to false
-                    GroupApproval = False
-                #if it is in the app
-                else:
-                    #check if it is true or false
-                    if data['GroupApproval'] == 'True' and not OwnerApproval and data['ApprovalList']:
-                        GroupApproval = True
-                        GroupApprovalList = data['ApprovalList']
-                    else:
-                        GroupApproval = False
-                        GroupApprovalList = ''
+        OwnerApproval = GetOwnerApproval()
+        GroupApproval = GetGroupApproval()
+        GroupApprovalList = GetGroupApprovalList()
+        OwnerID = GetOwnerID()
 
         #if the file is found
         if not os.path.isfile(MemeDirectory):

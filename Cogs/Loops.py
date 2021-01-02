@@ -7,7 +7,7 @@ from discord.ext import commands, tasks
 from discord.utils import get
 
 from Modules.FolderBuilder import FolderBuilder
-from Modules.AllFolderExist import AllFolderExist
+from Modules.ConfigLoad import UseFolders, UseFoldersCheck
 from Modules.Error import Error
 
 class Loops(commands.Cog):
@@ -20,23 +20,8 @@ class Loops(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        directory = 'Json/Config.json'
         global UseFolders
-        if os.path.isfile(directory):
-            with open(directory) as f:
-                data = json.load(f)
-                if 'UseFolders' not in data:
-                    print('use folders not in config, not going to use folders')
-                else:
-                    UseFolders = data['UseFolders']
-                    if UseFolders != "False":
-                        #Check and create all folders exist
-                        AllFolderExist()
-                        print(data['UseFolders'])
-                    else:
-                        print("not using folders")
-        else:
-            UseFolders = "False"
+        UseFolders = UseFoldersCheck()
 
         print("""
         ######################

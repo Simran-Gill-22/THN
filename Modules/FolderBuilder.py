@@ -5,7 +5,7 @@ import random
 #random image scripts
 def FolderBuilder(channel_name, UseFolders):
         path =''
-        if UseFolders == "True":
+        if UseFolders:
                 #set variables
                 image_list = os.listdir(channel_name) 
                 folder_string = ''

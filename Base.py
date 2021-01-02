@@ -15,15 +15,12 @@ import datetime
 import importlib
 import json
 
-#import function modules
-from Modules.AllFolderExist import AllFolderExist
 
 #client const
 OSBuid : float = 2.0
 Now = datetime.datetime.now()
 #Set to True to run on a test server
 IsDebug : bool = True
-UseFolders = ""
 
 
 def get_prefix(bot, message):
