@@ -15,7 +15,7 @@ def Scraper():
         #call the url
         driver.get(url)
         #wait for the complete page to load
-        time.sleep(10)
+        time.sleep(15)
         #save the source of the page
         html = driver.page_source
         #parse this source

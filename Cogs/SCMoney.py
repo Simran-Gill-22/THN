@@ -22,7 +22,7 @@ class SCMoney(commands.Cog):
         #define the file to use
         directory = 'Json/fundingGoals.json'
         #lets the user know this will take some time
-        await ctx.send('This takes a couple of seconds....')
+        await ctx.send('This takes a couple of seconds(15)....')
         #if the file is found
         oldMoney = ""
         oldTime = ""
@@ -44,7 +44,7 @@ class SCMoney(commands.Cog):
             #call the scraper function with the returned value being an int
             newMoney = Scraper()
             #calculate the difference between the new and old value
-            moneyDiff = int(newMoney) - int(oldMoney)
+            moneyDiff = int(float(newMoney)) - int(float(oldMoney))
             #call the time difference function
             timeDiff = TimeConvert(dateTimeObj, Now)
             #send a message with these values
