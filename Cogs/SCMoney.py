@@ -62,7 +62,7 @@ class SCMoney(commands.Cog):
             #call the scraper function with the returned value being an int
             moneySpent = Scraper()
             #send a message with these values
-            statement = 'Star Citizen has raised ${:,} at the time of {}'.format(int(moneySpent), Now.strftime("%d-%m-%Y %H:%M:%S"))
+            statement = 'Chris Roberts has raised ${:,} at the time of {}'.format(int(moneySpent), Now.strftime("%d-%m-%Y %H:%M:%S"))
             await ctx.send(statement)
             #store the values in the file
             NewFundingGoal = {
